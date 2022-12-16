@@ -14,4 +14,9 @@ import nimporter, nim_vantage
 #     ],
 # )
 
-nim_vantage.startAPI()
+settings = nim_vantage.GatewaySettings()
+settings.initSettings()
+
+settings.addEndpoint("/", "domain.com/v1/api")
+
+nim_vantage.startRunner(settings)
