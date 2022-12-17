@@ -38,11 +38,36 @@ proc hasRedirect(self: GatewaySettings, endpoint: string): bool {.exportpy.} =
 #   else:
 #     req.send(Http404)
 
-proc startRunner(settings: GatewaySettings): void {.exportpy.} =
-  proc onReq(req: Request): Future[void] = 
-    if settings.hasRedirect(req.path.get()):
-      req.send(settings.getRedirect(req.path.get()))
-    else:
-      req.send(Http404)
+proc startRunner(settings: GatewaySettings): string {.exportpy.} =
+  # var schema = {"/": "mydomain.com/api"}.toTable
 
-  run(onReq)
+  # # proc onReq(req: Request): Future[void] = 
+  # #   if settings.hasRedirect(req.path.get()):
+  # #     req.send(settings.getRedirect(req.path.get()))
+  # #   else:
+  # #     req.send(Http404)
+  # proc onReq(req: Request): Future[void] = 
+  #   if schema.hasKey(req.path.get()):
+  #     req.send(schema[req.path.get()])
+  #   else:
+  #     req.send(Http404)
+
+  # run(onReq)
+  return "hello"
+
+
+
+# proc onReq(req: Request): Future[void] = 
+#   if settings.hasRedirect(req.path.get()):
+#     req.send(settings.getRedirect(req.path.get()))
+#   else:
+#     req.send(Http404)
+proc onReq(req: Request): Future[void] = 
+  var schema = {"/": "mydomain.com/api"}.toTable
+  
+  if schema.hasKey(req.path.get()):
+    req.send(schema[req.path.get()])
+  else:
+    req.send(Http404)
+
+run(onReq)

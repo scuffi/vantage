@@ -8,8 +8,8 @@ RUN apt-get update &&\
     apt-get install git -y
 
 WORKDIR /root/
-RUN pip install choosenim_install
-# RUN curl https://nim-lang.org/choosenim/init.sh -sSf | bash -s -- -y
+# RUN pip install choosenim_install
+RUN curl https://nim-lang.org/choosenim/init.sh -sSf | bash -s -- -y
 ENV PATH=/root/.nimble/bin:$PATH
 
 WORKDIR /
@@ -20,9 +20,12 @@ WORKDIR /
 
 RUN pip install --upgrade pip
 
-# RUN nimble install nimpy --accept --verbose
-RUN pip install nimporter
+# RUN pip install nimporter
 
 COPY . .
+
+RUN nimble install nimpy --accept
+RUN nimble install httpbeast
+RUN nim c --threads:on --out:ex --d:release example.nim
 
 CMD [ "python", "main.py" ]

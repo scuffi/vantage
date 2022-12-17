@@ -3,8 +3,10 @@ os.system("nim --version")
 os.system("nimble --version")
 os.system("choosenim --version")
 
-from setuptools import setup
-import nimporter, nim_vantage
+import threading
+# import nimporter, nim_vantage
+os.system("./ex")
+# import ex
 
 # import vantage
 
@@ -14,9 +16,9 @@ import nimporter, nim_vantage
 #     ],
 # )
 
-settings = nim_vantage.GatewaySettings()
-settings.initSettings()
+# settings = nim_vantage.GatewaySettings()
+# settings.initSettings()
 
-settings.addEndpoint("/", "domain.com/v1/api")
+# settings.addEndpoint("/", "domain.com/v1/api")
 
-nim_vantage.startRunner(settings)
+# nim_vantage.startRunner(settings)
