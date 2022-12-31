@@ -22,52 +22,38 @@ proc getRedirect(self: GatewaySettings, endpoint: string): string =
 proc hasRedirect(self: GatewaySettings, endpoint: string): bool {.exportpy.} =
   return self.schema.hasKey(endpoint)
 
-# var
-#   api = Vantage(schema: initTable[string, string]())
-
-# api.addEndpoint("/", "myredirect.com/api/v1/help")
-# api.addEndpoint("/api", "other_service.com/api/something")
-
-# proc onRequest(req: Request): Future[void] = 
-
-#   var
-#     schema = {"/": "mydomain.com/api"}.toTable
+proc start(self: GatewaySettings): void {.exportpy.} =
   
+  proc onReq(req: Request): Future[void] = 
+    if self.hasRedirect(req.path.get()):
+      req.send(self.getRedirect(req.path.get()))
+    else:
+      req.send(Http404)
+
+  return
+
+proc startRunner(settings: GatewaySettings): string {.exportpy.} =
+  var schema = {"/": "mydomain.com/api"}.toTable
+
+  # proc onReq(req: Request): Future[void] = 
+  #   if settings.hasRedirect(req.path.get()):
+  #     req.send(settings.getRedirect(req.path.get()))
+  #   else:
+  #     req.send(Http404)
+  proc onReq(req: Request): Future[void] = 
+    if schema.hasKey(req.path.get()):
+      req.send(schema[req.path.get()])
+    else:
+      req.send(Http404)
+
+  run(onReq)
+
+# proc onReq(req: Request): Future[void] = 
+#   var schema = {"/": "mydomain.com/api"}.toTable
+
 #   if schema.hasKey(req.path.get()):
 #     req.send(schema[req.path.get()])
 #   else:
 #     req.send(Http404)
 
-proc startRunner(settings: GatewaySettings): string {.exportpy.} =
-  # var schema = {"/": "mydomain.com/api"}.toTable
-
-  # # proc onReq(req: Request): Future[void] = 
-  # #   if settings.hasRedirect(req.path.get()):
-  # #     req.send(settings.getRedirect(req.path.get()))
-  # #   else:
-  # #     req.send(Http404)
-  # proc onReq(req: Request): Future[void] = 
-  #   if schema.hasKey(req.path.get()):
-  #     req.send(schema[req.path.get()])
-  #   else:
-  #     req.send(Http404)
-
-  # run(onReq)
-  return "hello"
-
-
-
-# proc onReq(req: Request): Future[void] = 
-#   if settings.hasRedirect(req.path.get()):
-#     req.send(settings.getRedirect(req.path.get()))
-#   else:
-#     req.send(Http404)
-proc onReq(req: Request): Future[void] = 
-  var schema = {"/": "mydomain.com/api"}.toTable
-  
-  if schema.hasKey(req.path.get()):
-    req.send(schema[req.path.get()])
-  else:
-    req.send(Http404)
-
-run(onReq)
+# run(onReq)

@@ -1,24 +1,26 @@
 import os
-os.system("nim --version")
-os.system("nimble --version")
-os.system("choosenim --version")
+import time
 
-import threading
-# import nimporter, nim_vantage
-os.system("./ex")
-# import ex
+def wait_then_add(settings):
+    print("Started background process")
+    time.sleep(20)
+    
+    print("Adding a new endpoint")
+    settings.add_endpoint("/hello", "BOO")
 
-# import vantage
+if __name__ == "__main__":
+    os.system("nim --version")
+    os.system("nimble --version")
+    os.system("choosenim --version")
 
-# setup(
-#     setup_requires = [
-#         "choosenim_install",        # Optional. Auto-installs Nim compiler
-#     ],
-# )
+    import multiprocessing
 
-# settings = nim_vantage.GatewaySettings()
-# settings.initSettings()
-
-# settings.addEndpoint("/", "domain.com/v1/api")
-
-# nim_vantage.startRunner(settings)
+    from src import vantage
+    
+    gateway = vantage.Vantage()
+    
+    gateway.add_endpoint("/", "domain.com/hello-world")
+    
+    multiprocessing.Process(target=wait_then_add, args=(gateway,)).start()
+    
+    gateway.start()
